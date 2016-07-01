@@ -1,4 +1,5 @@
 from django.shortcuts import render, HttpResponse
+from.models import Patient
 
 
 def welcome(request):
@@ -6,7 +7,9 @@ def welcome(request):
 
 
 def index(request):
-    return HttpResponse("Index")
+    patients = Patient.objects.all()
+    output = ", ".join([p.name for p in patients])
+    return HttpResponse(output)
 
 
 def new(request):

@@ -14,6 +14,8 @@ class Doctor(models.Model):
 class Patient(models.Model):
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
+    phone = models.CharField(max_length=20)
+    email = models.CharField(max_length=20)
     dob = models.DateField(null=True, blank=True)
 
     def __str__(self):
