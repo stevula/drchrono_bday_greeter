@@ -1,4 +1,6 @@
 from django.shortcuts import render, HttpResponse
+from django.template import loader
+
 from.models import Patient
 
 
@@ -8,13 +10,16 @@ def welcome(request):
 
 def index(request):
     patients = Patient.objects.all()
-    output = ", ".join([p.name for p in patients])
-    return HttpResponse(output)
+    return render(request, 'happy_bday/index.html', {'patient_list': patients})
+
+
+def show(request, patient_id):
+    try:
+        patient = Patient.objects.get(pk=patient_id)
+    except Patient.DoesNotExist:
+        raise Http404("Patient does not exist")
+    return render(request, 'happy_bday/show.html', {'patient': patient})
 
 
 def new(request):
     return HttpResponse("new")
-
-
-def show(request, patient_id):
-    return HttpResponse("show %s" % patient_id)
