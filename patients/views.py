@@ -1,6 +1,6 @@
-from django.shortcuts import render, HttpResponse, get_object_or_404
-from django.template import loader
+from django.shortcuts import render, HttpResponse, HttpResponseRedirect, get_object_or_404
 from django.http import Http404
+from django.core.urlresolvers import reverse
 
 from.models import Patient, Doctor
 
@@ -18,11 +18,12 @@ def index(request):
             dob=form['dob'],
             email=form['email'],
             phone=form['phone'])
-
-    # TODO: get patients belonging to this doctor only
-    patients = doctor.patient_set.all()
-    return render(request, 'patients/index.html', {
-        'patient_list': patients, 'doctor': doctor})
+        return HttpResponseRedirect(reverse('patients:index'))
+    else:
+        # TODO: get patients belonging to this doctor only
+        patients = doctor.patient_set.all()
+        return render(request, 'patients/index.html', {
+            'patient_list': patients, 'doctor': doctor})
 
 
 def show(request, patient_id):
