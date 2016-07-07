@@ -6,17 +6,22 @@ from.models import Patient, Doctor
 
 
 def index(request):
-    # if request.method == 'POST':
-    #     # create Patient
-    #     Patient.create()
-    # else:
-        # handle GET
-        # TODO: get currently signed in doctor
-        doctor = Doctor.objects.get(pk=1)
-        # TODO: get patients belonging to this doctor only
-        patients = Patient.objects.all()
-        return render(request, 'patient_mgr/index.html', {
-            'patient_list': patients, 'doctor': doctor})
+    # TODO: get currently signed in doctor
+    doctor = Doctor.objects.get(pk=1)
+
+    if request.method == 'POST':
+        form = request.POST
+        # create Patient
+        doctor.patient_set.create(
+            name=form['name'],
+            dob=form['dob'],
+            email=form['email'],
+            phone=form['phone'])
+
+    # TODO: get patients belonging to this doctor only
+    patients = Patient.objects.all()
+    return render(request, 'patient_mgr/index.html', {
+        'patient_list': patients, 'doctor': doctor})
 
 
 def show(request, patient_id):
@@ -30,7 +35,3 @@ def show(request, patient_id):
 
 def new(request):
     return HttpResponse("new")
-
-
-def create(request):
-    return HttpResponse("Hi")
