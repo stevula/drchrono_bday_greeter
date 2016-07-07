@@ -1,25 +1,25 @@
 <h1>Hello {{ doctor }}!</h1> 
-<p>The following patients are enrolled in birthday reminders:</p>
 
 {% if patient_list %}
+    <p>The following patients are enrolled in birthday reminders:</p>
     <ul>
     {% for patient in patient_list %}
         <li><a href="/patients/{{ patient.id }}/">{{ patient }}</a></li>
     {% endfor %}
     </ul>
 {% else %}
-    <p>No patients found. <a href="/patients/new">Add some patients to the registry?</a></p>
+    <p>No patients found. Add some patients to the registry:</a></p>
 {% endif %}
 
 <form action="{% url 'patients:index' %}" method="post">
     {% csrf_token %}
     <label for="name">Name:</label>
-    <input type="text" name="name"><br>
+    <input type="text" name="name" value="Maya Angelou"><br>
     <label for="dob">Date of birth:</label>
-    <input type="date" name="dob"><br>
+    <input type="date" name="dob" value="1986-03-19"><br>
     <label for="email">Email:</label>
-    <input type="email" name="email"><br>
+    <input type="email" name="email" value="admin@admin.com"><br>
     <label for="phone">Phone:</label>
-    <input type="tel" name="phone"><br>
+    <input type="tel" name="phone" value="555-555-5555"><br>
     <input type="submit">
 </form>

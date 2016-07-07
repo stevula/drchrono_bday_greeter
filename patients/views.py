@@ -9,6 +9,7 @@ def index(request):
     # TODO: get currently signed in doctor
     doctor = Doctor.objects.get(pk=1)
 
+    # TODO: fetch patient data from api instead of form
     if request.method == 'POST':
         form = request.POST
         # create Patient
@@ -19,19 +20,11 @@ def index(request):
             phone=form['phone'])
 
     # TODO: get patients belonging to this doctor only
-    patients = Patient.objects.all()
-    return render(request, 'patient_mgr/index.html', {
+    patients = doctor.patient_set.all()
+    return render(request, 'patients/index.html', {
         'patient_list': patients, 'doctor': doctor})
 
 
 def show(request, patient_id):
     patient = get_object_or_404(Patient, pk=patient_id)
-    # try:
-    #     patient = Patient.objects.get(pk=patient_id)
-    # except Patient.DoesNotExist:
-    #     raise Http404("Patient does not exist.")
-    return render(request, 'patient_mgr/show.html', {'patient': patient})
-
-
-def new(request):
-    return HttpResponse("new")
+    return render(request, 'patients/show.html', {'patient': patient})
