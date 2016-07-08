@@ -4,7 +4,10 @@
     <p>The following patients are enrolled in birthday reminders:</p>
     <ul>
     {% for patient in patient_list %}
-        <li><a href="/patients/{{ patient.id }}/">{{ patient }}</a></li>
+        <li>
+            <a href="/patients/{{ patient.id }}/">{{ patient }}</a>
+            <!-- delete button -->
+        </li>
     {% endfor %}
     </ul>
 {% else %}
