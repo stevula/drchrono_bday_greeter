@@ -12,6 +12,12 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 import os
 
+from secret import *
+
+# added to make OAuth work
+import django
+
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -20,7 +26,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '^ooyx(ufp_v3a(ce6!v6!tf67jd6zn$dfh2*c8y$0f+i71ejy7'
+SECRET_KEY = secret_key()
+CLIENT_SECRET = client_secret()
+
+django.setup()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -31,13 +40,20 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'patients.apps.PatientsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+
+    # OAuth
+    'provider',
+    'provider.oauth2',
+
+    # this app
+    'patients.apps.PatientsConfig',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -71,6 +87,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'happy_bday.wsgi.application'
 
+SITE_ID = 1
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
