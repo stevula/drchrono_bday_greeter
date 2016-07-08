@@ -22,4 +22,5 @@ class Patient(models.Model):
         return "%s (%s)" % (self.name, self.dob)
 
     def age(self):
-        return datetime.datetime.now().year - self.dob
+        # TODO: use dateutil lib
+        return (datetime.datetime.now() - self.dob) / 365
