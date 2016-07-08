@@ -37,7 +37,7 @@ def create(request):
     return HttpResponseRedirect(reverse('patients:index'))
 
 
-def delete(request):
+def destroy(request):
     # TODO: get specific patient
     patient = Patient.objects.get(pk=1)
     return HttpResponseRedirect(reverse('patients:index'))
