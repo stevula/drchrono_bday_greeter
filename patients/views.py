@@ -3,8 +3,10 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.views import generic
 
-
 from.models import Patient, Doctor
+
+
+# VIEWS
 
 
 class IndexView(generic.ListView):
@@ -19,14 +21,23 @@ class DetailView(generic.DetailView):
     model = Patient
 
 
-def add(request):
+# VIEWLESS ACTIONS
+
+
+def create(request):
     # TODO: get currently signed in doctor
     doctor = Doctor.objects.get(pk=1)
-    print request.POST
     form = request.POST
     doctor.patient_set.create(
         name=form['name'],
         dob=form['dob'],
         email=form['email'],
         phone=form['phone'])
+    # TODO: redirect to patient show?
+    return HttpResponseRedirect(reverse('patients:index'))
+
+
+def delete(request):
+    # TODO: get specific patient
+    patient = Patient.objects.get(pk=1)
     return HttpResponseRedirect(reverse('patients:index'))
