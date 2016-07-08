@@ -1,7 +1,8 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import Http404
+from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.views import generic
+
 
 from.models import Patient, Doctor
 
@@ -33,3 +34,16 @@ class DetailView(generic.DetailView):
     template_name = 'patients/detail.html'
     # patient = get_object_or_404(Patient, pk=patient_id)
     # return render(request, 'patients/show.html', {'patient': patient})
+
+
+def add(request):
+    # TODO: get currently signed in doctor
+    doctor = Doctor.objects.get(pk=1)
+    print request.POST
+    form = request.POST
+    doctor.patient_set.create(
+        name=form['name'],
+        dob=form['dob'],
+        email=form['email'],
+        phone=form['phone'])
+    return HttpResponseRedirect(reverse('patients:index'))

@@ -6,7 +6,7 @@
     {% for patient in patient_list %}
         <li>
             <a href="/patients/{{ patient.id }}/">{{ patient }}</a>
-            <!-- delete button -->
+            <!-- TODO: delete button -->
         </li>
     {% endfor %}
     </ul>
@@ -14,7 +14,7 @@
     <p>No patients found. Add some patients to the registry:</a></p>
 {% endif %}
 
-<form action="{% url 'patients:index' %}" method="post">
+<form action="{% url 'patients:add' %}" method="post">
     {% csrf_token %}
     <label for="name">Name:</label>
     <input type="text" name="name" value="Maya Angelou"><br>
