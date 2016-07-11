@@ -1,2 +1,4 @@
+*.pyc
 secret*
 venv/*
+drchrono.py
