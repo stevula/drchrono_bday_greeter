@@ -11,12 +11,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
-
-from secret import *
-
-# added to make OAuth work
-import django
-
+import secret
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -26,10 +21,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = secret_key()
-CLIENT_SECRET = client_secret()
+SECRET_KEY = secret.secret_key()
 
-django.setup()
+# drchrono
+CLIENT_SECRET = secret.client_secret()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -46,14 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.sites',
-
-    # OAuth
-    'provider',
-    'provider.oauth2',
-
-    # this app
     'patients.apps.PatientsConfig',
+    'oauth2_provider',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -87,7 +76,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'happy_bday.wsgi.application'
 
-SITE_ID = 1
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases

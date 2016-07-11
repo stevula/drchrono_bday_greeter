@@ -19,5 +19,5 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^', include('patients.urls', namespace="patients")),
     url(r'^admin/', admin.site.urls),
-    url(r'^oauth2/', include('provider.oauth2.urls', namespace='oauth2')),
+    url(r'^o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
 ]

@@ -1,4 +1,4 @@
 Django==1.9.7
-django-oauth2-provider==0.2.6.1
+django-oauth-toolkit
 drchrono-birthday-greeting==1.0
 shortuuid==0.4.3
