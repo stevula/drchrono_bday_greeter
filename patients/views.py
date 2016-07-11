@@ -1,3 +1,7 @@
+import datetime
+import pytz
+import requests
+
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
@@ -34,8 +38,33 @@ class SigninView(generic.View):
 # VIEWLESS ACTIONS
 
 def drchrono(request):
-    code = request.GET.get('code')
-    return HttpResponse('code: %s' % code)
+    if 'error' in get_params:
+        raise ValueError('Error authorizing application: %s' % get_params[error])
+
+    response = requests.post('https://drchrono.com/o/token/', data={
+        'code': get_params['code'],
+        'grant_type': 'authorization_code',
+        'redirect_uri': REDIRECT_URI,
+        'client_id': CLIENT_ID,
+        'client_secret': CLIENT_SECRET,
+    })
+    response.raise_for_status()
+    data = response.json()
+
+    # Save these in your database associated with the user
+    access_token = data['access_token']
+    refresh_token = data['refresh_token']
+    expires_timestamp = datetime.datetime.now(pytz.utc) + datetime.timedelta(seconds=data['expires_in'])
+
+    response = requests.get('https://drchrono.com/api/users/current', headers={
+        'Authorization': 'Bearer %s' % access_token,
+    })
+    response.raise_for_status()
+    data = response.json()
+
+    # You can store this in your database along with the tokens
+    username = data['username']
+    return HttpResponse(username)
 
 
 def create(request):
