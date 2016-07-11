@@ -1,1 +1,5 @@
 Django==1.9.7
+django-oauth-toolkit
+django-cors-headers
+drchrono-birthday-greeting==1.0
+shortuuid==0.4.3
