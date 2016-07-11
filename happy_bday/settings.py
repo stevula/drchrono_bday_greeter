@@ -15,6 +15,7 @@ import os
 # only used in development
 try:
     from secret import *
+    from drchrono import *
 except ImportError:
     pass
 
