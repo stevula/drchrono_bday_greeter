@@ -33,9 +33,8 @@ class SigninView(generic.View):
 
 # VIEWLESS ACTIONS
 
-def drchrono(request, code):
-    print code
-    return HttpResponseRedirect(reverse('patients:index'))
+def drchrono(request):
+    return HttpResponse('code: %s' % code)
 
 
 def create(request):
