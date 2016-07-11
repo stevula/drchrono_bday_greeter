@@ -17,7 +17,9 @@ try:
     from secret import *
     from drchrono import *
 except ImportError:
-    pass
+    SECRET_KEY = get_env_variable('SECRET_KEY')
+    CLIENT_ID = get_env_variable('CLIENT_ID')
+    REDIRECT_URI = get_env_variable('REDIRECT_URI')
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
