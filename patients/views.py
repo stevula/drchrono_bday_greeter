@@ -20,7 +20,11 @@ class DetailView(generic.DetailView):
     model = Patient
 
 
-# class Signup(generic.)
+class SigninView(generic.View):
+    template_name = 'patients/patient_signin.html'
+
+    def get(self, request):
+        return render(request, 'patients/patient_signin.html')
 
 
 # VIEWLESS ACTIONS
