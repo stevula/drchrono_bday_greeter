@@ -21,6 +21,7 @@ except ImportError:
 
 SECRET_KEY = os.environ['SECRET_KEY']
 CLIENT_ID = os.environ['CLIENT_ID']
+CLIENT_SECRET = os.environ['CLIENT_SECRET']
 REDIRECT_URI = os.environ['REDIRECT_URI']
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
