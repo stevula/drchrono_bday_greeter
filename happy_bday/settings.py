@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 import os
 
-# only used in development
+# for development
 try:
     from secret import *
     from drchrono import *
