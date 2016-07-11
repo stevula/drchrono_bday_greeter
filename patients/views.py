@@ -58,15 +58,15 @@ def drchrono(request):
     refresh_token = data['refresh_token']
     expires_timestamp = datetime.datetime.now(pytz.utc) + datetime.timedelta(seconds=data['expires_in'])
 
-    response = requests.get('https://drchrono.com/api/users/current', headers={
-        'Authorization': 'Bearer %s' % access_token,
-    })
-    response.raise_for_status()
-    data = response.json()
+    # response = requests.get('https://drchrono.com/api/users/current', headers={
+    #     'Authorization': 'Bearer %s' % access_token,
+    # })
+    # response.raise_for_status()
+    # data = response.json()
 
-    # You can store this in your database along with the tokens
-    username = data['username']
-    return HttpResponse(username)
+    # # You can store this in your database along with the tokens
+    # username = data['username']
+    return HttpResponse(response)
 
 
 def create(request):
