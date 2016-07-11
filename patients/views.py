@@ -6,7 +6,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.views import generic
-from happy_bday.settings import CLIENT_ID, REDIRECT_URI
+from happy_bday.settings import CLIENT_ID, REDIRECT_URI, CLIENT_SECRET
 
 from .models import Patient, Doctor
 
