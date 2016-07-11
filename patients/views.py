@@ -34,6 +34,7 @@ class SigninView(generic.View):
 # VIEWLESS ACTIONS
 
 def drchrono(request):
+    code = request.GET.get('code')
     return HttpResponse('code: %s' % code)
 
 
