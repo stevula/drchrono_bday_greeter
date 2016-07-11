@@ -38,9 +38,11 @@ class SigninView(generic.View):
 # VIEWLESS ACTIONS
 
 def drchrono(request):
-    if 'error' in get_params:
+    error = request.GET.get('error')
+    if 'error':
         raise ValueError('Error authorizing application: %s' % get_params[error])
 
+    code = request.GET.get('code')
     response = requests.post('https://drchrono.com/o/token/', data={
         'code': get_params['code'],
         'grant_type': 'authorization_code',
