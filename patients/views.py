@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.views import generic
-import drchrono
+from happy_bday.settings import CLIENT_ID, REDIRECT_URI
 
 from .models import Patient, Doctor
 
@@ -26,8 +26,8 @@ class SigninView(generic.View):
 
     def get(self, request):
         return render(request, 'patients/patient_signin.html', {
-            'redirect_uri': drchrono.REDIRECT_URI,
-            'client_id': drchrono.CLIENT_ID
+            'redirect_uri': REDIRECT_URI,
+            'client_id': CLIENT_ID
             })
 
 
