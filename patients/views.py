@@ -8,7 +8,6 @@ from.models import Patient, Doctor
 
 # VIEWS
 
-
 class IndexView(generic.ListView):
     def get_queryset(self):
         """ All patients for currently signed in doctor """
@@ -21,8 +20,10 @@ class DetailView(generic.DetailView):
     model = Patient
 
 
-# VIEWLESS ACTIONS
+# class Signup(generic.)
 
+
+# VIEWLESS ACTIONS
 
 def create(request):
     # TODO: get currently signed in doctor
