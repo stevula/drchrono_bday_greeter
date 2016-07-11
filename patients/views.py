@@ -44,7 +44,7 @@ def drchrono(request):
 
     code = request.GET.get('code')
     response = requests.post('https://drchrono.com/o/token/', data={
-        'code': get_params['code'],
+        'code': code,
         'grant_type': 'authorization_code',
         'redirect_uri': REDIRECT_URI,
         'client_id': CLIENT_ID,
