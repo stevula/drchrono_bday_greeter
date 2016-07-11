@@ -40,7 +40,7 @@ class SigninView(generic.View):
 def drchrono(request):
     error = request.GET.get('error')
     if 'error':
-        raise ValueError('Error authorizing application: %s' % get_params[error])
+        raise ValueError('Error authorizing application: %s' % error)
 
     code = request.GET.get('code')
     response = requests.post('https://drchrono.com/o/token/', data={
