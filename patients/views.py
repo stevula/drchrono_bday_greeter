@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse
 from django.views import generic
 from happy_bday.settings import CLIENT_ID, REDIRECT_URI, CLIENT_SECRET
 
-from .models import Patient, Doctor
+from .models import Patient, Doctor, User
 
 
 # VIEWS
@@ -35,7 +35,7 @@ class SigninView(generic.View):
 
 # VIEWLESS ACTIONS
 
-def drchrono(request):
+def signin(request):
     error = request.GET.get('error')
     if error:
         raise ValueError('Error authorizing application: %s' % error)
@@ -64,7 +64,13 @@ def drchrono(request):
 
     # You can store this in your database along with the tokens
     username = data['username']
-    return HttpResponse(username)
+    user = User.objects.get_or_create(username=username)[0]
+    user.access_token = access_token
+    user.refresh_token = refresh_token
+    user.expires_timestamp = expires_timestamp
+    user.save()
+
+    return HttpResponse(user.username)
 
 
 def create(request):
