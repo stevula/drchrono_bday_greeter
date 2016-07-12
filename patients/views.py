@@ -38,7 +38,7 @@ class SigninView(generic.View):
 
     def get(self, request):
         url = 'https://drchrono.com/o/authorize/?redirect_uri=%s&response_type=code&client_id=%s' % (REDIRECT_URI, CLIENT_ID)
-        return render(request, 'patients/patient_signin.html', {'url': url})
+        return render(request, 'patients/patient_signin.html', {'user': None, 'url': url})
 
 
 # VIEWLESS ACTIONS
@@ -79,7 +79,9 @@ def drchrono_signin(request):
     user.expires_timestamp = expires_timestamp
     user.save()
 
-    return HttpResponseRedirect(reverse('patients:index'))
+    # return HttpResponseRedirect(reverse('patients:index'))
+    patients = fetch_patients(user)
+    return HttpResponse(patients)
 
 
 def create(request):
@@ -108,8 +110,27 @@ def login(request, user):
 
 def logout(request):
     request.session['user_pk'] = None
-    return None
+    return HttpResponseRedirect(reverse('patients:index'))
 
 
 def current_user(request):
-    return User.objects.get(pk=request.session['user_pk'])
+    try:
+        pk = request.session['user_pk']
+        return User.objects.get(pk=pk)
+    except:
+        return None
+
+
+def fetch_patients(user):
+    headers = {
+        'Authorization': 'Bearer %s' % user.access_token,
+    }
+
+    patients = []
+    patients_url = 'https://drchrono.com/api/patients'
+    while patients_url:
+        data = requests.get(patients_url, headers=headers).json()
+        return data
+    #     patients.extend(data['results'])
+    #     patients_url = data['next']  # A JSON null on the last page
+    # return patients

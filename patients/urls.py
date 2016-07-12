@@ -8,7 +8,7 @@ urlpatterns = [
     url(r'^patients/$', views.IndexView.as_view(), name='index'),
     url(r'^patients/(?P<pk>[0-9]+)/$', views.DetailView.as_view(), name='detail'),
     url(r'^patients/signin/$', views.SigninView.as_view(), name='signin'),
+    url(r'^patients/logout/$', views.logout, name='logout'),
     url(r'^patients/create/$', views.create, name='create'),
-    url(r'^patients/destroy/$', views.destroy, name='destroy'),
     url(r'^patients/drchrono_signin', views.drchrono_signin, name='drchrono_signin'),
 ]
