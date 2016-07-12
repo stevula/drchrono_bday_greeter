@@ -82,20 +82,7 @@ def drchrono_signin(request):
     # return HttpResponseRedirect(reverse('patients:index'))
     patients = fetch_patients(user)
     return HttpResponse(patients)
-
-
-def create(request):
-    # TODO: get currently signed in doctor
-    doctor = Doctor.objects.get(pk=1)
-    form = request.POST
-    doctor.patient_set.create(
-        name=form['name'],
-        dob=form['dob'],
-        email=form['email'],
-        phone=form['phone'])
-    # TODO: redirect to patient show?
-    return HttpResponseRedirect(reverse('patients:index'))
-
+    
 
 def destroy(request):
     # TODO: get specific patient
