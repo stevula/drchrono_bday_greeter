@@ -1,9 +1,14 @@
 <header>
     <h1>drchrono birthday reminder</h1>
+
     <nav>
         <ul>
-            <li><a href="/patients">home</a></li>
-            <li><a href="/patients/signin">signin</a></li>
+            <li><a href="/patients/">home</a></li>
+            {% if user %}
+                <li>Logged in as {{ user.username }}</li>
+            {% else %}
+                <li><a href="/patients/signin/">signin</a></li>
+            {% endif %}
         </ul>
     </nav>
 </header>

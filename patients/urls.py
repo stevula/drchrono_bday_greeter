@@ -10,5 +10,5 @@ urlpatterns = [
     url(r'^patients/signin/$', views.SigninView.as_view(), name='signin'),
     url(r'^patients/create/$', views.create, name='create'),
     url(r'^patients/destroy/$', views.destroy, name='destroy'),
-    url(r'^patients/signin', views.signin, name='signin'),
+    url(r'^patients/drchrono_signin', views.drchrono_signin, name='drchrono_signin'),
 ]

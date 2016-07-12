@@ -15,14 +15,22 @@ from .models import Patient, Doctor, User
 
 class IndexView(generic.ListView):
     def get_queryset(self):
-        """ All patients for currently signed in doctor """
-        # TODO: get currently signed in doctor
-        doctor = Doctor.objects.get(pk=1)
-        return doctor.patient_set.all()
+        return Patient.objects.all()
+
+    def get(self, request):
+        user = current_user(request)
+        return render(request, 'patients/patient_list.html', {
+            'patient_list': self.get_queryset(), 'user': user})
 
 
 class DetailView(generic.DetailView):
     model = Patient
+
+    def get(self, request, **kwargs):
+        user = current_user(request)
+        patient = Patient.objects.get(pk=kwargs.get('pk'))
+        return render(request, 'patients/patient_detail.html', {
+            'patient': patient, 'user': user})
 
 
 class SigninView(generic.View):
@@ -35,7 +43,7 @@ class SigninView(generic.View):
 
 # VIEWLESS ACTIONS
 
-def signin(request):
+def drchrono_signin(request):
     error = request.GET.get('error')
     if error:
         raise ValueError('Error authorizing application: %s' % error)
@@ -65,12 +73,13 @@ def signin(request):
     # You can store this in your database along with the tokens
     username = data['username']
     user = User.objects.get_or_create(username=username)[0]
+    login(request, user)
     user.access_token = access_token
     user.refresh_token = refresh_token
     user.expires_timestamp = expires_timestamp
     user.save()
 
-    return HttpResponse(user.username)
+    return HttpResponseRedirect(reverse('patients:index'))
 
 
 def create(request):
@@ -90,3 +99,17 @@ def destroy(request):
     # TODO: get specific patient
     patient = Patient.objects.get(pk=1)
     return HttpResponseRedirect(reverse('patients:index'))
+
+
+def login(request, user):
+    request.session['user_pk'] = user.pk
+    return None
+
+
+def logout(request):
+    request.session['user_pk'] = None
+    return None
+
+
+def current_user(request):
+    return User.objects.get(pk=request.session['user_pk'])
