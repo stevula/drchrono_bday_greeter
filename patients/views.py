@@ -41,7 +41,7 @@ def drchrono(request):
         raise ValueError('Error authorizing application: %s' % error)
 
     code = request.GET.get('code')
-    response = requests.post('https://drchrono.com/o/token/', allow_redirects=False, data={
+    response = requests.post('https://drchrono.com/o/token/', data={
         'code': code,
         'grant_type': 'authorization_code',
         'redirect_uri': REDIRECT_URI,
