@@ -1,5 +1,6 @@
-{{Context}}
-<h1>Hello {{ doctor }}!</h1> 
+{% extends 'patients/base.html' %}
+
+{% block content %}
 
 {% if patient_list %}
     <p>The following patients are enrolled in birthday reminders:</p>
@@ -27,3 +28,4 @@
     <input type="tel" name="phone" value="555-555-5555"><br>
     <input type="submit">
 </form>
+{% endblock %}
