@@ -29,10 +29,8 @@ class SigninView(generic.View):
     template_name = 'patients/patient_signin.html'
 
     def get(self, request):
-        return render(request, 'patients/patient_signin.html', {
-            'redirect_uri': REDIRECT_URI,
-            'client_id': CLIENT_ID
-            })
+        url = 'https://drchrono.com/o/authorize/?redirect_uri=%s&response_type=code&client_id=%s' % (REDIRECT_URI, CLIENT_ID)
+        return render(request, 'patients/patient_signin.html', {'url': url})
 
 
 # VIEWLESS ACTIONS
@@ -58,15 +56,15 @@ def drchrono(request):
     refresh_token = data['refresh_token']
     expires_timestamp = datetime.datetime.now(pytz.utc) + datetime.timedelta(seconds=data['expires_in'])
 
-    # response = requests.get('https://drchrono.com/api/users/current', headers={
-    #     'Authorization': 'Bearer %s' % access_token,
-    # })
-    # response.raise_for_status()
-    # data = response.json()
+    response = requests.get('https://drchrono.com/api/users/current', headers={
+        'Authorization': 'Bearer %s' % access_token,
+    })
+    response.raise_for_status()
+    data = response.json()
 
-    # # You can store this in your database along with the tokens
-    # username = data['username']
-    return HttpResponse(response)
+    # You can store this in your database along with the tokens
+    username = data['username']
+    return HttpResponse(username)
 
 
 def create(request):
