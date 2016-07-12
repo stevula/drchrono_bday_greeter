@@ -1,8 +1,12 @@
+import datetime
+import pytz
+import requests
+
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.views import generic
-from happy_bday.settings import CLIENT_ID, REDIRECT_URI
+from happy_bday.settings import CLIENT_ID, REDIRECT_URI, CLIENT_SECRET
 
 from .models import Patient, Doctor
 
@@ -25,17 +29,42 @@ class SigninView(generic.View):
     template_name = 'patients/patient_signin.html'
 
     def get(self, request):
-        return render(request, 'patients/patient_signin.html', {
-            'redirect_uri': REDIRECT_URI,
-            'client_id': CLIENT_ID
-            })
+        url = 'https://drchrono.com/o/authorize/?redirect_uri=%s&response_type=code&client_id=%s' % (REDIRECT_URI, CLIENT_ID)
+        return render(request, 'patients/patient_signin.html', {'url': url})
 
 
 # VIEWLESS ACTIONS
 
-def drchrono(request, code):
-    print code
-    return HttpResponseRedirect(reverse('patients:index'))
+def drchrono(request):
+    error = request.GET.get('error')
+    if error:
+        raise ValueError('Error authorizing application: %s' % error)
+
+    code = request.GET.get('code')
+    response = requests.post('https://drchrono.com/o/token/', data={
+        'code': code,
+        'grant_type': 'authorization_code',
+        'redirect_uri': REDIRECT_URI,
+        'client_id': CLIENT_ID,
+        'client_secret': CLIENT_SECRET,
+    })
+    response.raise_for_status()
+    data = response.json()
+
+    # Save these in your database associated with the user
+    access_token = data['access_token']
+    refresh_token = data['refresh_token']
+    expires_timestamp = datetime.datetime.now(pytz.utc) + datetime.timedelta(seconds=data['expires_in'])
+
+    response = requests.get('https://drchrono.com/api/users/current', headers={
+        'Authorization': 'Bearer %s' % access_token,
+    })
+    response.raise_for_status()
+    data = response.json()
+
+    # You can store this in your database along with the tokens
+    username = data['username']
+    return HttpResponse(username)
 
 
 def create(request):

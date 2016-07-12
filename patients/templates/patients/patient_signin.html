@@ -1,1 +1,5 @@
-<a href="https://drchrono.com/o/authorize/?redirect_uri={{redirect_uri}}&response_type=code&client_id={{client_id}}">Log in with drchrono</a>
+{% extends 'patients/base.html' %}
+
+{% block content %}
+<a href="{{url}}">Log in with drchrono</a>
+{% endblock %}
