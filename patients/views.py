@@ -5,10 +5,11 @@ import requests
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
+from django.core.exceptions import ObjectDoesNotExist
 from django.views import generic
 from happy_bday.settings import CLIENT_ID, REDIRECT_URI, CLIENT_SECRET
 
-from .models import User
+from .models import User, Greeting
 
 
 # VIEWS
@@ -36,8 +37,7 @@ class SigninView(generic.View):
         return render(request, 'patients/patient_signin.html', {'user': None, 'url': url})
 
 
-# VIEWLESS ACTIONS
-
+# USERS
 
 def create_user_or_update_tokens(data):
     access_token = data['access_token']
@@ -52,6 +52,27 @@ def create_user_or_update_tokens(data):
     user.expires_timestamp = expires_timestamp
     user.save()
     return user
+
+
+# GREETINGS
+
+def register_for_greetings(patients):
+    new_patients = []
+    for patient in patients:
+        try:
+            Greeting.objects.get(patient_id=patient['id'])
+        except ObjectDoesNotExist:
+            new_greeting = Greeting.objects.create(
+                doctor_id=patient['doctor'],
+                patient_id=patient['id'],
+                first_name=patient['first_name'],
+                last_name=patient['last_name'],
+                dob=patient['date_of_birth'],
+                email=patient['email']
+            )
+            new_patients.append(new_greeting)
+    print new_patients
+    return new_patients
 
 
 # SESSIONS
@@ -116,4 +137,5 @@ def get_patients(access_token):
         data = requests.get(patients_url, headers=headers).json()
         patients.extend(data['results'])
         patients_url = data['next']  # A JSON null on the last page
+    register_for_greetings(patients)
     return patients

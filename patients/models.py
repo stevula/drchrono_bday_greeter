@@ -12,9 +12,9 @@ class User(models.Model):
 
 
 class Greeting(models.Model):
-    patient_id = models.IntegerField
+    doctor_id = models.IntegerField()
+    patient_id = models.IntegerField()
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)
-    dob = models.DateField
+    dob = models.DateField(blank=True, null=True)
     email = models.CharField(max_length=50)
-    doctor_id = models.IntegerField
