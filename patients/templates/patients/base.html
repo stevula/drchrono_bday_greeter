@@ -6,9 +6,10 @@
             <li><a href="/patients/">home</a></li>
             {% if user %}
                 <li>Logged in as {{ user.username }}</li>
-                <li><a href="/patients/logout">Log out</a></li>
+                <li><a href="/patients/signout">sign out</a></li>
             {% else %}
-                <li><a href="/patients/signin/">signin</a></li>
+                <li><a href="/patients/signin">sign in</a>
+</li>
             {% endif %}
         </ul>
     </nav>

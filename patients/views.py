@@ -58,31 +58,25 @@ def drchrono_signin(request):
     })
     response.raise_for_status()
     data = response.json()
+    create_user_or_update_tokens(data)
+    signin(request, user)
+    return HttpResponseRedirect(reverse('patients:index'))
 
-    # Save these in your database associated with the user
+
+def create_user_or_update_tokens(data):
     access_token = data['access_token']
     refresh_token = data['refresh_token']
     expires_timestamp = datetime.datetime.now(pytz.utc) + datetime.timedelta(seconds=data['expires_in'])
 
-    response = requests.get('https://drchrono.com/api/users/current', headers={
-        'Authorization': 'Bearer %s' % access_token,
-    })
-    response.raise_for_status()
-    data = response.json()
-
-    # You can store this in your database along with the tokens
-    username = data['username']
+    user_info = get_user_info(access_token)
+    username = user_info['username']
     user = User.objects.get_or_create(username=username)[0]
-    login(request, user)
     user.access_token = access_token
     user.refresh_token = refresh_token
     user.expires_timestamp = expires_timestamp
     user.save()
+    return user
 
-    # return HttpResponseRedirect(reverse('patients:index'))
-    patients = fetch_patients(user)
-    return HttpResponse(patients)
-    
 
 def destroy(request):
     # TODO: get specific patient
@@ -90,12 +84,12 @@ def destroy(request):
     return HttpResponseRedirect(reverse('patients:index'))
 
 
-def login(request, user):
+def signin(request, user):
     request.session['user_pk'] = user.pk
-    return None
+    return user
 
 
-def logout(request):
+def signout(request):
     request.session['user_pk'] = None
     return HttpResponseRedirect(reverse('patients:index'))
 
@@ -108,16 +102,24 @@ def current_user(request):
         return None
 
 
-def fetch_patients(user):
+def get_user_info(access_token):
+    response = requests.get('https://drchrono.com/api/users/current', headers={
+        'Authorization': 'Bearer %s' % access_token,
+    })
+    response.raise_for_status()
+    return response.json()
+
+
+def get_patients(user):
     headers = {
         'Authorization': 'Bearer %s' % user.access_token,
     }
 
     patients = []
-    patients_url = 'https://drchrono.com/api/patients'
+    patients_url = 'https://drchrono.com/api/patients_summary'
     while patients_url:
         data = requests.get(patients_url, headers=headers).json()
-        return data
-    #     patients.extend(data['results'])
-    #     patients_url = data['next']  # A JSON null on the last page
-    # return patients
+        patients.extend(data['results'])
+        patients_url = data['next']  # A JSON null on the last page
+
+    return patients
