@@ -7,7 +7,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.views import generic
-from happy_bday.settings import CLIENT_ID, REDIRECT_URI, CLIENT_SECRET
+from drchrono_bday_greeter.settings import CLIENT_ID, REDIRECT_URI, CLIENT_SECRET
 
 from .models import User, Greeting
 
@@ -27,18 +27,18 @@ class IndexView(generic.ListView):
             patients = get_patients(user.access_token)
             new_patients = enroll_new_patients(patients)
             birthday_patients = self.get_birthdays_today()
-        return render(request, 'patients/patient_list.html', {
+        return render(request, 'greeter/patient_list.html', {
             'birthday_patients': birthday_patients,
             'new_patients': new_patients,
             'user': user})
 
 
 class SigninView(generic.View):
-    template_name = 'patients/patient_signin.html'
+    template_name = 'greeter/patient_signin.html'
 
     def get(self, request):
         url = 'https://drchrono.com/o/authorize/?redirect_uri=%s&response_type=code&client_id=%s' % (REDIRECT_URI, CLIENT_ID)
-        return render(request, 'patients/patient_signin.html', {'user': None, 'url': url})
+        return render(request, 'greeter/patient_signin.html', {'user': None, 'url': url})
 
 
 # GREETINGS
@@ -96,7 +96,7 @@ def signin(request, user):
 
 def signout(request):
     request.session['user_pk'] = None
-    return HttpResponseRedirect(reverse('patients:index'))
+    return HttpResponseRedirect(reverse('greeter:index'))
 
 
 def current_user(request):
@@ -127,7 +127,7 @@ def drchrono_signin(request):
     data = response.json()
     user = create_user_or_update_tokens(data)
     signin(request, user)
-    return HttpResponseRedirect(reverse('patients:index'))
+    return HttpResponseRedirect(reverse('greeter:index'))
 
 
 def get_user_info(access_token):

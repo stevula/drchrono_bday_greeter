@@ -3,12 +3,12 @@
 
     <nav>
         <ul>
-            <li><a href="/patients/">home</a></li>
+            <li><a href="/greeter/">home</a></li>
             {% if user %}
                 <li>logged in as {{ user.username }}</li>
-                <li><a href="/patients/signout">sign out</a></li>
+                <li><a href="/greeter/signout">sign out</a></li>
             {% else %}
-                <li><a href="/patients/signin">sign in</a>
+                <li><a href="/greeter/signin">sign in</a>
 </li>
             {% endif %}
         </ul>

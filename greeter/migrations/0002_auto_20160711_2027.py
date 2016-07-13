@@ -9,7 +9,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('patients', '0001_initial'),
+        ('greeter', '0001_initial'),
     ]
 
     operations = [
@@ -43,6 +43,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='user',
             name='doctor',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='patients.Doctor'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='greeter.Doctor'),
         ),
     ]
