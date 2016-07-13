@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse
 from django.views import generic
 from happy_bday.settings import CLIENT_ID, REDIRECT_URI, CLIENT_SECRET
 
-from .models import Patient, Doctor, User
+from .models import User
 
 
 # VIEWS
@@ -28,16 +28,6 @@ class IndexView(generic.ListView):
             'patient_list': self.get_queryset(request), 'user': user})
 
 
-class DetailView(generic.DetailView):
-    model = Patient
-
-    def get(self, request, **kwargs):
-        user = current_user(request)
-        patient = Patient.objects.get(pk=kwargs.get('pk'))
-        return render(request, 'patients/patient_detail.html', {
-            'patient': patient, 'user': user})
-
-
 class SigninView(generic.View):
     template_name = 'patients/patient_signin.html'
 
@@ -47,11 +37,6 @@ class SigninView(generic.View):
 
 
 # VIEWLESS ACTIONS
-
-def destroy(request):
-    # TODO: get specific patient
-    patient = Patient.objects.get(pk=1)
-    return HttpResponseRedirect(reverse('patients:index'))
 
 
 def create_user_or_update_tokens(data):
@@ -116,7 +101,6 @@ def get_user_info(access_token):
     response = requests.get('https://drchrono.com/api/users/current', headers={
         'Authorization': 'Bearer %s' % access_token,
     })
-
     response.raise_for_status()
     return response.json()
 
@@ -127,7 +111,7 @@ def get_patients(access_token):
     }
 
     patients = []
-    patients_url = 'https://drchrono.com/api/patients_summary'
+    patients_url = 'https://drchrono.com/api/patients?verbose=true'
     while patients_url:
         data = requests.get(patients_url, headers=headers).json()
         patients.extend(data['results'])

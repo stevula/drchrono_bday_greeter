@@ -4,14 +4,6 @@ import datetime
 from django.db import models
 
 
-class Doctor(models.Model):
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.name
-
-
 class User(models.Model):
     username = models.CharField(max_length=20)
     access_token = models.CharField(max_length=50)
@@ -19,16 +11,10 @@ class User(models.Model):
     expires_timestamp = models.DateTimeField(blank=True, null=True)
 
 
-class Patient(models.Model):
-    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
-    name = models.CharField(max_length=200)
-    phone = models.CharField(max_length=20)
-    email = models.CharField(max_length=20)
-    dob = models.DateField(null=True, blank=True)
-
-    def __str__(self):
-        return "%s (DOB: %s)" % (self.name, self.dob)
-
-    def age(self):
-        # TODO: use dateutil lib
-        return (datetime.datetime.now() - self.dob) / 365
+class Greeting(models.Model):
+    patient_id = models.IntegerField
+    first_name = models.CharField(max_length=200)
+    last_name = models.CharField(max_length=200)
+    dob = models.DateField
+    email = models.CharField(max_length=50)
+    doctor_id = models.IntegerField

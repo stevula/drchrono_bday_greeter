@@ -7,6 +7,7 @@
     <ul>
     {% for patient in patient_list %}
         <li>
+            <p>{{patient}}</p>
             <p>Name: {{patient.last_name}}, {{patient.first_name}}</p>
             <p>DOB: {{patient.date_of_birth}}</p>
         </li>
