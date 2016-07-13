@@ -69,3 +69,4 @@ class PatientDetailViewTests(TestCase):
 
 
 # check that new patients are updated correctly
+# leapyear bday

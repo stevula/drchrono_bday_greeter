@@ -16,5 +16,6 @@ class Greeting(models.Model):
     patient_id = models.IntegerField()
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)
-    dob = models.DateField(blank=True, null=True)
+    birth_day = models.IntegerField(blank=True, null=True)
+    birth_month = models.IntegerField(blank=True, null=True)
     email = models.CharField(max_length=50)

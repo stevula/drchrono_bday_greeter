@@ -15,19 +15,22 @@ from .models import User, Greeting
 # VIEWS
 
 class IndexView(generic.ListView):
-    def get_queryset(self, request):
-        patients = []
-        if current_user(request):
-            patients = get_patients(current_user(request).access_token)
-        return patients
+    def get_birthdays_today(self):
+        birthday_patients = get_patients_by_birthday()
+        return birthday_patients
 
     def get(self, request):
         user = current_user(request)
-        patients = self.get_queryset(request)
-        new_patients = enroll_new_patients(patients)
-
+        new_patients = []
+        birthday_patients = []
+        if user:
+            patients = get_patients(user.access_token)
+            new_patients = enroll_new_patients(patients)
+            birthday_patients = self.get_birthdays_today()
         return render(request, 'patients/patient_list.html', {
-            'patient_list': patients, 'user': user})
+            'birthday_patients': birthday_patients,
+            'new_patients': new_patients,
+            'user': user})
 
 
 class SigninView(generic.View):
@@ -46,15 +49,24 @@ def enroll_new_patients(patients):
         try:
             Greeting.objects.get(patient_id=patient['id'])
         except ObjectDoesNotExist:
-            new_greeting = Greeting.objects.create(
+            dob = patient['date_of_birth']
+            day = None
+            month = None
+            if dob:
+                dob = datetime.datetime.strptime(dob, '%Y-%m-%d')
+                day = dob.day
+                month = dob.month
+
+            Greeting.objects.create(
                 doctor_id=patient['doctor'],
                 patient_id=patient['id'],
                 first_name=patient['first_name'],
                 last_name=patient['last_name'],
-                dob=patient['date_of_birth'],
-                email=patient['email']
+                email=patient['email'],
+                birth_day=day,
+                birth_month=month
             )
-            new_patients.append(new_greeting)
+            new_patients.append(patient)
     return new_patients
 
 
@@ -138,3 +150,13 @@ def get_patients(access_token):
         patients.extend(data['results'])
         patients_url = data['next']  # A JSON null on the last page
     return patients
+
+
+def get_patients_by_birthday(birthday=datetime.datetime.today()):
+    day = birthday.day
+    month = birthday.month
+    birthdays = Greeting.objects.filter(
+        birth_day=day,
+        birth_month=month
+    )
+    return birthdays

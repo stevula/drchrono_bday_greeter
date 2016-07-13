@@ -2,19 +2,28 @@
 
 {% block content %}
 
-{% if patient_list %}
-    <p>The following patients are enrolled in birthday reminders:</p>
+{% if new_patients and user %}
+    <p>The following patients were just added to the birthday reminder system:</p>
     <ul>
-    {% for patient in patient_list %}
+    {% for patient in new_patients %}
         <li>
-            <p>{{patient}}</p>
-            <p>Name: {{patient.last_name}}, {{patient.first_name}}</p>
-            <p>DOB: {{patient.date_of_birth}}</p>
+            {{patient}}
         </li>
     {% endfor %}
     </ul>
-{% else %}
-    <p>No patients found.</p>
+{% endif %}
+
+{% if birthday_patients and user %}
+    <p>The following patients have birthdays today:</p>
+    <ul>
+    {% for patient in birthday_patients %}
+        <li>
+            {{patient}}
+        </li>
+    {% endfor %}
+    </ul>
+{% elif user %}
+    <p>No patients with birthdays today.</p>
 {% endif %}
 
 {% endblock %}
