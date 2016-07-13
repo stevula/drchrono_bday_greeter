@@ -7,8 +7,8 @@
     <ul>
     {% for patient in patient_list %}
         <li>
-            <a href="/patients/{{ patient.id }}/">{{ patient }}</a>
-            <!-- TODO: delete button -->
+            <p>Name: {{patient.last_name}}, {{patient.first_name}}</p>
+            <p>DOB: {{patient.date_of_birth}}</p>
         </li>
     {% endfor %}
     </ul>

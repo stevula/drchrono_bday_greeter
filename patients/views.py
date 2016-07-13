@@ -14,13 +14,18 @@ from .models import Patient, Doctor, User
 # VIEWS
 
 class IndexView(generic.ListView):
-    def get_queryset(self):
-        return Patient.objects.all()
+    def get_queryset(self, request):
+        patients = []
+        if current_user(request):
+            patients = get_patients(current_user(request).access_token)
+        return patients
 
     def get(self, request):
         user = current_user(request)
+        patients = []
+
         return render(request, 'patients/patient_list.html', {
-            'patient_list': self.get_queryset(), 'user': user})
+            'patient_list': self.get_queryset(request), 'user': user})
 
 
 class DetailView(generic.DetailView):
@@ -43,23 +48,9 @@ class SigninView(generic.View):
 
 # VIEWLESS ACTIONS
 
-def drchrono_signin(request):
-    error = request.GET.get('error')
-    if error:
-        raise ValueError('Error authorizing application: %s' % error)
-
-    code = request.GET.get('code')
-    response = requests.post('https://drchrono.com/o/token/', data={
-        'code': code,
-        'grant_type': 'authorization_code',
-        'redirect_uri': REDIRECT_URI,
-        'client_id': CLIENT_ID,
-        'client_secret': CLIENT_SECRET,
-    })
-    response.raise_for_status()
-    data = response.json()
-    create_user_or_update_tokens(data)
-    signin(request, user)
+def destroy(request):
+    # TODO: get specific patient
+    patient = Patient.objects.get(pk=1)
     return HttpResponseRedirect(reverse('patients:index'))
 
 
@@ -78,11 +69,7 @@ def create_user_or_update_tokens(data):
     return user
 
 
-def destroy(request):
-    # TODO: get specific patient
-    patient = Patient.objects.get(pk=1)
-    return HttpResponseRedirect(reverse('patients:index'))
-
+# SESSIONS
 
 def signin(request, user):
     request.session['user_pk'] = user.pk
@@ -102,17 +89,41 @@ def current_user(request):
         return None
 
 
+# DRCHRONO
+
+
+def drchrono_signin(request):
+    error = request.GET.get('error')
+    if error:
+        raise ValueError('Error authorizing application: %s' % error)
+
+    code = request.GET.get('code')
+    response = requests.post('https://drchrono.com/o/token/', data={
+        'code': code,
+        'grant_type': 'authorization_code',
+        'redirect_uri': REDIRECT_URI,
+        'client_id': CLIENT_ID,
+        'client_secret': CLIENT_SECRET,
+    })
+    response.raise_for_status()
+    data = response.json()
+    user = create_user_or_update_tokens(data)
+    signin(request, user)
+    return HttpResponseRedirect(reverse('patients:index'))
+
+
 def get_user_info(access_token):
     response = requests.get('https://drchrono.com/api/users/current', headers={
         'Authorization': 'Bearer %s' % access_token,
     })
+
     response.raise_for_status()
     return response.json()
 
 
-def get_patients(user):
+def get_patients(access_token):
     headers = {
-        'Authorization': 'Bearer %s' % user.access_token,
+        'Authorization': 'Bearer %s' % access_token,
     }
 
     patients = []
@@ -121,5 +132,4 @@ def get_patients(user):
         data = requests.get(patients_url, headers=headers).json()
         patients.extend(data['results'])
         patients_url = data['next']  # A JSON null on the last page
-
     return patients
