@@ -23,10 +23,11 @@ class IndexView(generic.ListView):
 
     def get(self, request):
         user = current_user(request)
-        patients = []
+        patients = self.get_queryset(request)
+        new_patients = enroll_new_patients(patients)
 
         return render(request, 'patients/patient_list.html', {
-            'patient_list': self.get_queryset(request), 'user': user})
+            'patient_list': patients, 'user': user})
 
 
 class SigninView(generic.View):
@@ -35,6 +36,26 @@ class SigninView(generic.View):
     def get(self, request):
         url = 'https://drchrono.com/o/authorize/?redirect_uri=%s&response_type=code&client_id=%s' % (REDIRECT_URI, CLIENT_ID)
         return render(request, 'patients/patient_signin.html', {'user': None, 'url': url})
+
+
+# GREETINGS
+
+def enroll_new_patients(patients):
+    new_patients = []
+    for patient in patients:
+        try:
+            Greeting.objects.get(patient_id=patient['id'])
+        except ObjectDoesNotExist:
+            new_greeting = Greeting.objects.create(
+                doctor_id=patient['doctor'],
+                patient_id=patient['id'],
+                first_name=patient['first_name'],
+                last_name=patient['last_name'],
+                dob=patient['date_of_birth'],
+                email=patient['email']
+            )
+            new_patients.append(new_greeting)
+    return new_patients
 
 
 # USERS
@@ -52,27 +73,6 @@ def create_user_or_update_tokens(data):
     user.expires_timestamp = expires_timestamp
     user.save()
     return user
-
-
-# GREETINGS
-
-def register_for_greetings(patients):
-    new_patients = []
-    for patient in patients:
-        try:
-            Greeting.objects.get(patient_id=patient['id'])
-        except ObjectDoesNotExist:
-            new_greeting = Greeting.objects.create(
-                doctor_id=patient['doctor'],
-                patient_id=patient['id'],
-                first_name=patient['first_name'],
-                last_name=patient['last_name'],
-                dob=patient['date_of_birth'],
-                email=patient['email']
-            )
-            new_patients.append(new_greeting)
-    print new_patients
-    return new_patients
 
 
 # SESSIONS
@@ -137,5 +137,4 @@ def get_patients(access_token):
         data = requests.get(patients_url, headers=headers).json()
         patients.extend(data['results'])
         patients_url = data['next']  # A JSON null on the last page
-    register_for_greetings(patients)
     return patients
