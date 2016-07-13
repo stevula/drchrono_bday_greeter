@@ -13,13 +13,10 @@ class Doctor(models.Model):
 
 
 class User(models.Model):
-    # many users can manage patients on behalf of one doctor
-    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
     username = models.CharField(max_length=20)
-    password = models.CharField(max_length=50)
-    email = models.CharField(max_length=50)
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
+    access_token = models.CharField(max_length=50)
+    refresh_token = models.CharField(max_length=50)
+    expires_timestamp = models.DateTimeField(blank=True, null=True)
 
 
 class Patient(models.Model):

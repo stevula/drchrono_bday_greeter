@@ -135,5 +135,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = 'staticfiles'
 
-# TODO: change this
+# TODO: modify this?
 CORS_ORIGIN_ALLOW_ALL = True
