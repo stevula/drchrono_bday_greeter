@@ -6,8 +6,10 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.sessions.models import Session
 from django.views import generic
-from drchrono_bday_greeter.settings import CLIENT_ID, REDIRECT_URI, CLIENT_SECRET
+from drchrono_bday_greeter.settings import (
+    CLIENT_ID, REDIRECT_URI, CLIENT_SECRET)
 
 from .models import User, Greeting
 
@@ -15,30 +17,45 @@ from .models import User, Greeting
 # VIEWS
 
 class IndexView(generic.ListView):
-    def get_birthdays_today(self):
-        birthday_patients = get_patients_by_birthday()
-        return birthday_patients
+    def get_greetings_for_today(self):
+        today = datetime.datetime.today()
+        day = today.day
+        month = today.month
+        matches = Greeting.objects.filter(
+            birth_day=day,
+            birth_month=month
+        )
+        return matches
 
     def get(self, request):
         user = current_user(request)
+        # signout(request)
+        # TODO: get rid of this and handle expired tokens properly
+        # user = None
         new_patients = []
         birthday_patients = []
         if user:
             patients = get_patients(user.access_token)
             new_patients = enroll_new_patients(patients)
-            birthday_patients = self.get_birthdays_today()
-        return render(request, 'greeter/patient_list.html', {
-            'birthday_patients': birthday_patients,
-            'new_patients': new_patients,
-            'user': user})
+            greetings_today = self.get_greetings_for_today()
+            # TODO: refactor duplication
+            return render(request, 'greeter/greeter_list.html', {
+                'greetings_today': greetings_today,
+                'new_patients': new_patients,
+                'user': user
+                })
+        return render(request, 'greeter/greeter_list.html', {'user': user})
 
 
 class SigninView(generic.View):
-    template_name = 'greeter/patient_signin.html'
+    template_name = 'greeter/greeter_signin.html'
 
     def get(self, request):
-        url = 'https://drchrono.com/o/authorize/?redirect_uri=%s&response_type=code&client_id=%s' % (REDIRECT_URI, CLIENT_ID)
-        return render(request, 'greeter/patient_signin.html', {'user': None, 'url': url})
+        url = 'https://drchrono.com/o/authorize/?redirect_uri=%s&response_type=code&client_id=%s' % (
+            REDIRECT_URI, CLIENT_ID)
+
+        return render(request, 'greeter/greeter_signin.html', {
+            'user': None, 'url': url})
 
 
 # GREETINGS
@@ -49,6 +66,7 @@ def enroll_new_patients(patients):
         try:
             Greeting.objects.get(patient_id=patient['id'])
         except ObjectDoesNotExist:
+            # TODO: refactor this part into a function
             dob = patient['date_of_birth']
             day = None
             month = None
@@ -75,7 +93,8 @@ def enroll_new_patients(patients):
 def create_user_or_update_tokens(data):
     access_token = data['access_token']
     refresh_token = data['refresh_token']
-    expires_timestamp = datetime.datetime.now(pytz.utc) + datetime.timedelta(seconds=data['expires_in'])
+    expires_timestamp = datetime.datetime.now(pytz.utc) + datetime.timedelta(
+        seconds=data['expires_in'])
 
     user_info = get_user_info(access_token)
     username = user_info['username']
@@ -109,8 +128,7 @@ def current_user(request):
 
 # DRCHRONO
 
-
-def drchrono_signin(request):
+def drchrono_redirect(request):
     error = request.GET.get('error')
     if error:
         raise ValueError('Error authorizing application: %s' % error)
@@ -138,6 +156,7 @@ def get_user_info(access_token):
     return response.json()
 
 
+# get all patient data from drchrono API
 def get_patients(access_token):
     headers = {
         'Authorization': 'Bearer %s' % access_token,
@@ -146,17 +165,8 @@ def get_patients(access_token):
     patients = []
     patients_url = 'https://drchrono.com/api/patients?verbose=true'
     while patients_url:
+        print requests.get(patients_url, headers=headers)
         data = requests.get(patients_url, headers=headers).json()
         patients.extend(data['results'])
         patients_url = data['next']  # A JSON null on the last page
     return patients
-
-
-def get_patients_by_birthday(birthday=datetime.datetime.today()):
-    day = birthday.day
-    month = birthday.month
-    birthdays = Greeting.objects.filter(
-        birth_day=day,
-        birth_month=month
-    )
-    return birthdays

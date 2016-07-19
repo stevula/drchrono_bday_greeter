@@ -7,5 +7,5 @@ urlpatterns = [
     url(r'^greeter/$', views.IndexView.as_view(), name='index'),
     url(r'^greeter/signin/$', views.SigninView.as_view(), name='signin'),
     url(r'^greeter/signout/$', views.signout, name='signout'),
-    url(r'^greeter/drchrono_signin', views.drchrono_signin, name='drchrono_signin'),
+    url(r'^greeter/drchrono_redirect', views.drchrono_redirect, name='drchrono_redirect'),
 ]

@@ -13,17 +13,17 @@
     </ul>
 {% endif %}
 
-{% if birthday_patients and user %}
+{% if greetings_today and user %}
     <p>The following patients have birthdays today:</p>
     <ul>
-    {% for patient in birthday_patients %}
+    {% for patient in greetings_today %}
         <li>
             {{patient}}
         </li>
     {% endfor %}
     </ul>
 {% elif user %}
-    <p>No patients with birthdays today.</p>
+    <p>No birthdays today.</p>
 {% endif %}
 
 {% endblock %}

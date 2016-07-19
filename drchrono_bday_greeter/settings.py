@@ -135,5 +135,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = 'staticfiles'
 
-# TODO: modify this?
+# TODO: revisit this
 CORS_ORIGIN_ALLOW_ALL = True
+
+# TODO: revisit this
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
