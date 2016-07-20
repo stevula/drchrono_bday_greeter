@@ -55,27 +55,27 @@ class SigninView(generic.View):
             'user': None, 'url': url})
 
 
-# # SESSIONS
-
-# def signin(request, user):
-#     request.session['user_pk'] = user.pk
-#     return user
-
-
-# def signout(request):
-#     request.session['user_pk'] = None
-#     return HttpResponseRedirect(reverse('greeter:index'))
+# SESSIONS
+# TODO: use built-in auth
+def signin(request, user):
+    request.session['user_pk'] = user.pk
+    return user
 
 
-# def current_user(request):
-#     try:
-#         pk = request.session['user_pk']
-#         return User.objects.get(pk=pk)
-#     except:
-#         return None
+def signout(request):
+    request.session['user_pk'] = None
+    return HttpResponseRedirect(reverse('greeter:index'))
 
 
-# OAuth
+def current_user(request):
+    try:
+        pk = request.session['user_pk']
+        return User.objects.get(pk=pk)
+    except:
+        return None
+
+
+# DRCHRONO OAUTH (no view)
 
 def drchrono_redirect(request):
     error = request.GET.get('error')

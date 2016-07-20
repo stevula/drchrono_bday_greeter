@@ -140,3 +140,11 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 # TODO: revisit this
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# back-end for custom user model
+AUTHENTICATION_BACKENDS = [
+    'greeter.custom_backends.PasswordlessAuthBackend'
+]
+
+# use custom auth user model
+AUTH_USER_MODEL = 'greeter.User'
