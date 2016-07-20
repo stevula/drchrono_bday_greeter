@@ -5,6 +5,7 @@ import drchrono
 
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib.auth import authenticate, login
 from django.core.urlresolvers import reverse
 from django.views import generic
 from drchrono_bday_greeter.settings import (
@@ -28,10 +29,11 @@ class IndexView(generic.ListView):
         return matches
 
     def get(self, request):
-        user = current_user(request)
         new_patients = []
         birthday_patients = []
-        if user:
+        user = request.user
+        # user is authenticated on successful redirect from drchrono
+        if user.is_authenticated():
             patients = drchrono.get_patients(user.access_token)
             new_patients = enroll_new_patients(patients)
             greetings_today = self.get_greetings_for_today()
@@ -57,22 +59,22 @@ class SigninView(generic.View):
 
 # SESSIONS
 # TODO: use built-in auth
-def signin(request, user):
-    request.session['user_pk'] = user.pk
-    return user
+# def signin(request, user):
+#     request.session['user_pk'] = user.pk
+#     return user
 
 
-def signout(request):
-    request.session['user_pk'] = None
-    return HttpResponseRedirect(reverse('greeter:index'))
+# def signout(request):
+#     request.session['user_pk'] = None
+#     return HttpResponseRedirect(reverse('greeter:index'))
 
 
-def current_user(request):
-    try:
-        pk = request.session['user_pk']
-        return User.objects.get(pk=pk)
-    except:
-        return None
+# def current_user(request):
+#     try:
+#         pk = request.session['user_pk']
+#         return User.objects.get(pk=pk)
+#     except:
+#         return None
 
 
 # DRCHRONO OAUTH (no view)
@@ -93,5 +95,10 @@ def drchrono_redirect(request):
     response.raise_for_status()
     data = response.json()
     user = create_user_or_update_tokens(data)
-    signin(request, user)
+    user = authenticate(username=user.username)
+    if user is not None:
+        if user.is_active:
+            login(request, user)
+        # TODO: handle inactive users
+    # TODO: else error message
     return HttpResponseRedirect(reverse('greeter:index'))

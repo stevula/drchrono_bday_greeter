@@ -4,7 +4,7 @@
     <nav>
         <ul>
             <li><a href="/greeter/">home</a></li>
-            {% if user %}
+            {% if user.is_authenticated %}
                 <li>logged in as {{ user.username }}</li>
                 <li><a href="/greeter/signout">sign out</a></li>
             {% else %}
