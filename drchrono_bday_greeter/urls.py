@@ -1,4 +1,4 @@
-"""happy_bday URL Configuration
+"""drchrono_bday_greeter URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/1.9/topics/http/urls/
@@ -17,7 +17,7 @@ from django.conf.urls import include, url
 from django.contrib import admin
 
 urlpatterns = [
-    url(r'^', include('patients.urls', namespace="patients")),
+    url(r'^', include('greeter.urls', namespace="greeter")),
     url(r'^admin/', admin.site.urls),
     url(r'^o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
 ]

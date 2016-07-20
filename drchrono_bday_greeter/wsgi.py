@@ -1,5 +1,5 @@
 """
-WSGI config for happy_bday project.
+WSGI config for drchrono_bday_greeter project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "happy_bday.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "drchrono_bday_greeter.settings")
 
 application = get_wsgi_application()

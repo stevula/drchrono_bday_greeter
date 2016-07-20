@@ -1,8 +1,8 @@
-{% extends 'patients/base.html' %}
+{% extends 'greeter/base.html' %}
 
 {% block content %}
 
-{% if new_patients and user %}
+{% if new_patients and user.is_authenticated %}
     <p>The following patients were just added to the birthday reminder system:</p>
     <ul>
     {% for patient in new_patients %}
@@ -13,17 +13,17 @@
     </ul>
 {% endif %}
 
-{% if birthday_patients and user %}
+{% if greetings_today and user.is_authenticated %}
     <p>The following patients have birthdays today:</p>
     <ul>
-    {% for patient in birthday_patients %}
+    {% for patient in greetings_today %}
         <li>
             {{patient}}
         </li>
     {% endfor %}
     </ul>
-{% elif user %}
-    <p>No patients with birthdays today.</p>
+{% elif user.is_authenticated %}
+    <p>No birthdays today.</p>
 {% endif %}
 
 {% endblock %}
