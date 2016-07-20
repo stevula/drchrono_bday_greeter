@@ -5,7 +5,7 @@ import drchrono
 
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse
 from django.views import generic
 from drchrono_bday_greeter.settings import (
@@ -57,24 +57,9 @@ class SigninView(generic.View):
             'user': None, 'url': url})
 
 
-# SESSIONS
-# TODO: use built-in auth
-# def signin(request, user):
-#     request.session['user_pk'] = user.pk
-#     return user
-
-
-# def signout(request):
-#     request.session['user_pk'] = None
-#     return HttpResponseRedirect(reverse('greeter:index'))
-
-
-# def current_user(request):
-#     try:
-#         pk = request.session['user_pk']
-#         return User.objects.get(pk=pk)
-#     except:
-#         return None
+def signout(request):
+    logout(request)
+    return HttpResponseRedirect(reverse('greeter:index'))
 
 
 # DRCHRONO OAUTH (no view)

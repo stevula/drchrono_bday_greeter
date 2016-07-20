@@ -15,6 +15,9 @@ class User(models.Model):
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ()
 
+    def is_authenticated(self):
+        return True
+
 
 class Greeting(models.Model):
     doctor_id = models.IntegerField()
